@@ -36,7 +36,12 @@ var log = require('nodlog')({
  },
  logmatic: {
    key: 'API_KEY',
-   enabled: true
+   enabled: true,
+   context: {
+     app: 'myApp',
+     instance: 'dev-1',
+     env: 'development'
+   }
  },
  loggly: {
    token: 'API_TOKEN',

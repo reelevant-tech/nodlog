@@ -94,15 +94,21 @@ var winstonLog = function () {
     if (options.logmatic.enabled) {
       require('winston-logstash');
       /*jshint -W106*/
-      winstonLogger.add(winston.transports.Logstash, {
+      var logmaticOptions = {
         port: 10515,
         ssl_enable: true,
         host: 'api.logmatic.io',
         max_connect_retries: -1,
         meta: { logmaticKey: options.logmatic.key },
         node_name: options.hostname,
-      });
+      };
       /*jshint +W106*/
+      if (options.logmatic.context) {
+        for (var prop in options.logmatic.context) {
+          logmaticOptions.meta[prop] = options.logmatic.context[prop];
+        }
+      }
+      winstonLogger.add(winston.transports.Logstash, logmaticOptions);
     }
     winstonLogger.on('error', function (err) {
       console.error(err);
