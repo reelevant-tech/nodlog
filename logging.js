@@ -133,46 +133,22 @@ var _log = function (level) {
 };
 
 var log = {
-  // TRACE: debug information to have a basic stack trace: begin method X, end method X ...
-  trace: function () {
-    var args = [].slice.call(arguments, 0);
-    args.unshift('trace');
-    return _log.apply(null, args);
-  },
-  // DEBUG: information used for debug
-  debug: function () {
-    var args = [].slice.call(arguments, 0);
-    args.unshift('debug');
-    return _log.apply(null, args);
-  },
-  // INFO: notification of a normal action
-  info: function () {
-    var args = [].slice.call(arguments, 0);
-    args.unshift('info');
-    return _log.apply(null, args);
-  },
-  // WARN: incorrect behaviour but the application can continue
-  warn: function () {
-    var args = [].slice.call(arguments, 0);
-    args.unshift('warn');
-    return _log.apply(null, args);
-  },
-  // ERROR: exceptions/crashes
-  error: function () {
-    var args = [].slice.call(arguments, 0);
-    args.unshift('error');
-    return _log.apply(null, args);
-  },
-  // FATAL: problem that prevents the service from running correctly
-  fatal: function () {
-    var args = [].slice.call(arguments, 0);
-    args.unshift('fatal');
-    return _log.apply(null, args);
-  },
   levels: function () {
     return levels;
   }
 };
+
+var setLogLevel = function (level) {
+  log[level] = function () {
+    var args = [].slice.call(arguments, 0);
+    args.unshift(level);
+    return _log.apply(null, args);
+  };
+};
+
+for (var level in levels) {
+  setLogLevel(level);
+}
 
 module.exports = function (opt) {
   if (typeof opt !== 'undefined') {
