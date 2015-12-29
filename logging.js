@@ -101,6 +101,7 @@ var winstonLog = function () {
         max_connect_retries: -1,
         meta: { logmaticKey: options.logmatic.key },
         node_name: options.hostname,
+		level: 'trace' //log all levels
       };
       /*jshint +W106*/
       if (options.logmatic.context) {
