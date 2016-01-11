@@ -1,14 +1,13 @@
 {
   "name": "nodlog",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Log wrapper for node",
   "main": "logging.js",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/Kiwup/nodlog.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kiwup/nodlog.git"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Reelevant Dev <dev@reelevant.com>",
   "license": "MIT",
   "dependencies": {

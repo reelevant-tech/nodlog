@@ -133,9 +133,25 @@ var _log = function (level) {
   }
 };
 
+var timers = {};
+
 var log = {
   levels: function () {
     return levels;
+  },
+  startTimer: function (timerName) {
+    timers[timerName] = new Date();
+  },
+  stopTimer: function (timerName) {
+    var newTime = new Date();
+    var oldTime = timers[timerName];
+    if (!oldTime) {
+      this.warning('Timer ' + timerName + ' missing startTimer call');
+      return;
+    }
+    delete timers[timerName];
+    var timePassed = newTime - oldTime;
+    this.trace('Timer "' + timerName + '" took ' + timePassed + ' ms', { timer: timerName, ms: timePassed });
   }
 };
 

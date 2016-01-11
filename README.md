@@ -1,5 +1,4 @@
-NODLOG
-===
+# NODLOG
 
 Node wrapper for logging to:
 
@@ -19,15 +18,13 @@ It has several logging levels:
 It can be used just like `console.log()` with multiple parameters and
 objects.
 
-Installation
----
+## Installation
 
 ```shell
 npm install --save nodlog
 ```
 
-How to use
----
+## How to use
 
 ```javascript
 var log = require('nodlog')({
@@ -57,3 +54,18 @@ log.warn('The object', myObject, 'is invalid');
 
 The `hostname` option should be filled with the actual server name.
 This will be used by loggly/logmatic to enabling filtering.
+
+### Timers
+
+Named timers can be used to check how long a function call takes:
+
+```javascript
+log.startTimer('test');
+setTimeout(function () {
+  log.stopTimer('test');
+}, 300);
+```
+
+Will log as _trace_ :
+
+`Timer "test" took 301 ms, { timer: "test", ms: 301 }`
