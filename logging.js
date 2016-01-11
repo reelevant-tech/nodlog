@@ -146,7 +146,7 @@ var log = {
     var newTime = new Date();
     var oldTime = timers[timerName];
     if (!oldTime) {
-      this.warning('Timer ' + timerName + ' missing startTimer call');
+      this.warn('Timer ' + timerName + ' missing startTimer call');
       return;
     }
     delete timers[timerName];
