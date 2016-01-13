@@ -17,6 +17,7 @@ var options = {
     color: true
   },
   logmatic: {
+    level: levels.trace,
     key: null,
     enabled: false
   },
@@ -25,6 +26,7 @@ var options = {
     subdomain: null,
     enabled: false
   },
+  timers: true,       // set to false to disable timer functionality
   hostname: 'localhost'
 };
 
@@ -101,7 +103,7 @@ var winstonLog = function () {
         max_connect_retries: -1,
         meta: { logmaticKey: options.logmatic.key },
         node_name: options.hostname,
-		level: 'trace' //log all levels
+		    level: 'trace'
       };
       /*jshint +W106*/
       if (options.logmatic.context) {
@@ -127,7 +129,7 @@ var _log = function (level) {
   }
   if (
       (options.loggly.enabled && options.loggly.token) ||
-      (options.logmatic.enabled && options.logmatic.key)
+      (options.logmatic.enabled && options.logmatic.key && levels[level] <= options.logmatic.level)
      ) {
       winstonLog.apply(null, [].slice.call(arguments, 0));
   }
@@ -140,18 +142,22 @@ var log = {
     return levels;
   },
   startTimer: function (timerName) {
-    timers[timerName] = new Date();
+    if (options.timers) {
+      timers[timerName] = new Date();
+    }
   },
   stopTimer: function (timerName) {
-    var newTime = new Date();
-    var oldTime = timers[timerName];
-    if (!oldTime) {
-      //this.warn('Timer ' + timerName + ' missing startTimer call');
-      return;
+    if (options.timers) {
+      var newTime = new Date();
+      var oldTime = timers[timerName];
+      if (!oldTime) {
+        //this.warn('Timer ' + timerName + ' missing startTimer call');
+        return;
+      }
+      delete timers[timerName];
+      var timePassed = newTime - oldTime;
+      this.trace('Timer "' + timerName + '" took ' + timePassed + ' ms', { timer: timerName, ms: timePassed });
     }
-    delete timers[timerName];
-    var timePassed = newTime - oldTime;
-    this.trace('Timer "' + timerName + '" took ' + timePassed + ' ms', { timer: timerName, ms: timePassed });
   }
 };
 

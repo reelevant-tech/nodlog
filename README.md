@@ -29,7 +29,8 @@ npm install --save nodlog
 ```javascript
 var log = require('nodlog')({
  console: {
-   color: true
+   color: true,
+   level: 5
  },
  logmatic: {
    key: 'API_KEY',
@@ -38,7 +39,8 @@ var log = require('nodlog')({
      app: 'myApp',
      instance: 'dev-1',
      env: 'development'
-   }
+   },
+   level: 3
  },
  loggly: {
    token: 'API_TOKEN',
@@ -66,6 +68,6 @@ setTimeout(function () {
 }, 300);
 ```
 
-Will log as _trace_ :
+Will log as _trace_ if `options.timers` is _true_ :
 
 `Timer "test" took 301 ms, { timer: "test", ms: 301 }`

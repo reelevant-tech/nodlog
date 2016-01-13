@@ -4,13 +4,16 @@
 
 var options = {
   console: {
-    level: 'trace',
+    level: 5,
     color: false
   },
   hostname: 'localhost'
 };
 
 if (process.env.LOGMATIC_KEY) {
+
+  console.log('Logmatic activated');
+
   options.logmatic = {
     key: process.env.LOGMATIC_KEY,
     enabled: true,
@@ -18,7 +21,8 @@ if (process.env.LOGMATIC_KEY) {
       app: 'nodlog',
       instance: 'test',
       env: 'dev'
-    }
+    },
+    level: 4
   };
 }
 
