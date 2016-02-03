@@ -13,57 +13,19 @@ var levels = {
 
 var options = {
   console: {
-    level: levels.trace,
-    color: true
+    level: levels.trace
   },
   logmatic: {
     level: levels.trace,
     key: null,
     enabled: false
   },
-  loggly: {
-    token: null,
-    subdomain: null,
-    enabled: false
-  },
-  timers: true,       // set to false to disable timer functionality
-  hostname: 'localhost'
+  timers: true       // set to false to disable timer functionality
 };
 
-var chalk;
 var consoleLog = function (level) {
   var args = [].slice.call(arguments, 0);
   args[0] = '['+level.toUpperCase()+']';
-
-  if (options.console.color) {
-    // use chalk to brighten up the console!
-    if (typeof chalk === 'undefined') {
-      chalk = require('chalk');
-    }
-
-    var chalkColor = chalk.white;
-    switch (levels[level]) {
-      case levels.trace:
-        chalkColor = chalk.gray;
-        break;
-      case levels.debug:
-        chalkColor = chalk.blue;
-        break;
-      case levels.info:
-        chalkColor = chalk.green;
-        break;
-      case levels.warn:
-        chalkColor = chalk.yellow;
-        break;
-      case levels.error:
-        chalkColor = chalk.magenta;
-        break;
-      case levels.fatal:
-        chalkColor = chalk.red;
-        break;
-    }
-    args = [ chalkColor.apply(chalk, args) ];
-  }
 
   var logger = console.log;
   if (console.error && levels[level] <= levels.warn) {
@@ -80,44 +42,54 @@ var winstonLog = function () {
 
     winstonLogger = new (winston.Logger)({
       levels: levels,
-      transports: [
-      ]
+      transports: []
     });
 
-    if (options.loggly.enabled) {
-      require('winston-loggly');
-      winstonLogger.add(winston.transports.Loggly, {
-        token: options.loggly.token,
-        subdomain: options.loggly.subdomain,
-        tags: ['Winston-NodeJS', options.hostname],
-        json: true
-      });
+    require('winston-logstash');
+    var label;
+    if (options.logmatic.label) {
+      label = options.logmatic.label;
     }
-    if (options.logmatic.enabled) {
-      require('winston-logstash');
-      /*jshint -W106*/
-      var logmaticOptions = {
-        port: 10515,
-        ssl_enable: true,
-        host: 'api.logmatic.io',
-        max_connect_retries: -1,
-        meta: { logmaticKey: options.logmatic.key },
-        node_name: options.hostname,
-		    level: 'trace'
-      };
-      /*jshint +W106*/
-      if (options.logmatic.context) {
-        for (var prop in options.logmatic.context) {
-          logmaticOptions.meta[prop] = options.logmatic.context[prop];
-        }
+
+    /*jshint -W106*/
+    var logmaticOptions = {
+      port: 10515,
+      ssl_enable: true,
+      host: 'api.logmatic.io',
+      max_connect_retries: -1,
+      meta: { logmaticKey: options.logmatic.key },
+      node_name: label,
+	    level: 'trace'
+    };
+    /*jshint +W106*/
+    if (options.logmatic.context) {
+      for (var prop in options.logmatic.context) {
+        logmaticOptions.meta[prop] = options.logmatic.context[prop];
       }
-      winstonLogger.add(winston.transports.Logstash, logmaticOptions);
     }
+    winstonLogger.add(winston.transports.Logstash, logmaticOptions);
     winstonLogger.on('error', function (err) {
       console.error(err);
     });
   }
 
+  if (arguments.length > 1) {
+    // fix all error 'message' not showing up
+    var lastArg = arguments[arguments.length - 1];
+    if (typeof lastArg === 'object') {
+      for (var key in lastArg) {
+        if (lastArg.hasOwnProperty(key)) {
+          var value = lastArg[key];
+          if (typeof value === 'object') {
+            if (typeof value.message !== 'undefined') {
+              lastArg[key].msg = lastArg[key].message;
+              delete lastArg[key].message;
+            }
+          }
+        }
+      }
+    }
+  }
   var args = [].slice.call(arguments, 0);
   winstonLogger.log.apply(winstonLogger, args);
 };
@@ -127,11 +99,8 @@ var _log = function (level) {
   if (levels[level] <= options.console.level) {
     consoleLog.apply(null, [].slice.call(arguments, 0));
   }
-  if (
-      (options.loggly.enabled && options.loggly.token) ||
-      (options.logmatic.enabled && options.logmatic.key && levels[level] <= options.logmatic.level)
-     ) {
-      winstonLog.apply(null, [].slice.call(arguments, 0));
+  if (options.logmatic.enabled && options.logmatic.key && levels[level] <= options.logmatic.level) {
+    winstonLog.apply(null, [].slice.call(arguments, 0));
   }
 };
 

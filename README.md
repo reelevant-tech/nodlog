@@ -2,21 +2,19 @@
 
 Node wrapper for logging to:
 
-- console (with optional colors based on log level)
-- [loggly](https://www.loggly.com)
+- console
 - [logmatic](http://www.logmatic.io)
 
 It has several logging levels:
 
-- `trace`: debug information to have a basic stack trace
-- `debug`: information used for debug
-- `info`: notification of a normal action
-- `warn`: incorrect behavior but the application can continue
-- `error`: exceptions
-- `fatal`: problem that prevents the service from running correctly
+- `trace` [5]: debug information to have a basic stack trace
+- `debug` [4]: information used for debug
+- `info`  [3]: notification of a normal action
+- `warn`  [2]: incorrect behavior but the application can continue
+- `error` [1]: exceptions
+- `fatal` [0]: problem that prevents the service from running correctly
 
-It can be used just like `console.log()` with multiple parameters and
-objects.
+It can be used just like `console.log()` with multiple parameters and objects.
 
 ## Installation
 
@@ -29,7 +27,6 @@ npm install --save nodlog
 ```javascript
 var log = require('nodlog')({
  console: {
-   color: true,
    level: 5
  },
  logmatic: {
@@ -40,22 +37,14 @@ var log = require('nodlog')({
      instance: 'dev-1',
      env: 'development'
    },
-   level: 3
+   level: 3,
+   label: 'dev-1'
  },
- loggly: {
-   token: 'API_TOKEN',
-   subdomain: 'SUBDOMAIN',
-   enabled: true
- },
- hostname: 'dev-1'
 });
 
 log.info('Informative note');
 log.warn('The object', myObject, 'is invalid');
 ```
-
-The `hostname` option should be filled with the actual server name.
-This will be used by loggly/logmatic to enabling filtering.
 
 ### Timers
 
