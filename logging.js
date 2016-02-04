@@ -76,13 +76,13 @@ var winstonLog = function () {
   if (arguments.length > 1) {
     // fix all error 'message' not showing up
     var lastArg = arguments[arguments.length - 1];
-    if (typeof lastArg === 'object') {
+    if (lastArg && typeof lastArg === 'object') {
       for (var key in lastArg) {
         if (lastArg.hasOwnProperty(key)) {
           var value = lastArg[key];
-          if (typeof value === 'object') {
-            if (typeof value.message !== 'undefined') {
-              lastArg[key].msg = lastArg[key].message;
+          if (value && typeof value === 'object') {
+            if (value.message) {
+              lastArg[key].msg = value.message;
               delete lastArg[key].message;
             }
           }
