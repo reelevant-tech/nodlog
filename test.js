@@ -5,6 +5,7 @@
 var options = {
   console: {
     level: 5,
+    timestamp: true
   }
 };
 
@@ -30,7 +31,13 @@ var log = require('./logging')(options);
 
 log.trace('This is a trace msg');
 log.debug('This is a debug msg', { testVal: 1 });
-log.debug('This is an error msg', { error: { message: 'bonjour', code: 400} }, { err: { message: 'ahah'} }, { other: { message: 'test' }});
+log.debug('This is an error msg', {
+    error: { message: 'bonjour', code: 400}
+  }, {
+    err: { message: 'ahah'}
+  }, {
+    other: { message: 'test' }
+  });
 log.startTimer('timer1');
 log.startTimer('timer2');
 setTimeout(function () {

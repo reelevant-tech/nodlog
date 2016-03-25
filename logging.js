@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 'use strict';
 
 var levels = {
@@ -13,7 +11,8 @@ var levels = {
 
 var options = {
   console: {
-    level: levels.trace
+    level: levels.trace,
+    timestamp: false
   },
   logmatic: {
     level: levels.trace,
@@ -25,7 +24,12 @@ var options = {
 
 var consoleLog = function (level) {
   var args = [].slice.call(arguments, 0);
-  args[0] = '['+level.toUpperCase()+']';
+  var timePrefix = '';
+  if (options.console.timestamp) {
+    var now = new Date();
+    timePrefix = '[' + now.toISOString() + '] ';
+  }
+  args[0] = timePrefix + '['+level.toUpperCase()+']';
 
   var logger = console.log;
   if (console.error && levels[level] <= levels.warn) {
@@ -64,7 +68,9 @@ var winstonLog = function () {
     /*jshint +W106*/
     if (options.logmatic.context) {
       for (var prop in options.logmatic.context) {
-        logmaticOptions.meta[prop] = options.logmatic.context[prop];
+        if (options.logmatic.context.hasOwnProperty(prop)) {
+          logmaticOptions.meta[prop] = options.logmatic.context[prop];
+        }
       }
     }
     winstonLogger.add(winston.transports.Logstash, logmaticOptions);
@@ -139,7 +145,9 @@ var setLogLevel = function (level) {
 };
 
 for (var level in levels) {
-  setLogLevel(level);
+  if (levels.hasOwnProperty(level)) {
+    setLogLevel(level);
+  }
 }
 
 module.exports = function (opt) {

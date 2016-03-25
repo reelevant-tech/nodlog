@@ -27,7 +27,8 @@ npm install --save nodlog
 ```javascript
 var log = require('nodlog')({
  console: {
-   level: 5
+   level: 5,
+   timestamp: true
  },
  logmatic: {
    key: 'API_KEY',
