@@ -63,7 +63,7 @@ var winstonLog = function () {
       max_connect_retries: -1,
       meta: { logmaticKey: options.logmatic.key },
       node_name: label,
-	    level: 'trace'
+      level: 'trace'
     };
     /*jshint +W106*/
     if (options.logmatic.context) {
@@ -79,23 +79,6 @@ var winstonLog = function () {
     });
   }
 
-  if (arguments.length > 1) {
-    // fix all error 'message' not showing up
-    var lastArg = arguments[arguments.length - 1];
-    if (lastArg && typeof lastArg === 'object') {
-      for (var key in lastArg) {
-        if (lastArg.hasOwnProperty(key)) {
-          var value = lastArg[key];
-          if (value && typeof value === 'object') {
-            if (value.message) {
-              lastArg[key].msg = value.message;
-              delete lastArg[key].message;
-            }
-          }
-        }
-      }
-    }
-  }
   var args = [].slice.call(arguments, 0);
   winstonLogger.log.apply(winstonLogger, args);
 };
